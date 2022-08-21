@@ -32,7 +32,7 @@ fn main_uwu() -> io::Result<()> {
             stdout.queue(Print('\n'))?;
         }
         stdout.flush()?;
-        sleep(Duration::from_millis(40));
+        sleep(Duration::from_millis(200));
     }
     wrap_up(stdout)
 }
