@@ -1,8 +1,10 @@
 use crossterm::style::{Color, Print, SetForegroundColor};
 use crossterm::terminal::{Clear, ClearType};
 use crossterm::{cursor, QueueableCommand};
+use ctrlc::set_handler;
 use std::fs;
-use std::io::{self, stdout, Write};
+use std::io::{self, stdout, Stdout, Write};
+use std::process::exit;
 use std::thread::sleep;
 use std::time::Duration;
 
@@ -32,11 +34,23 @@ fn main_uwu() -> io::Result<()> {
         stdout.flush()?;
         sleep(Duration::from_millis(40));
     }
-    stdout.queue(cursor::Show)?.queue(SetForegroundColor(Color::Reset))?.queue(Print('\n'))?;
+    wrap_up(stdout)
+}
+
+fn wrap_up(mut stdout: Stdout) -> io::Result<()> {
+    stdout
+        .queue(cursor::Show)?
+        .queue(SetForegroundColor(Color::Reset))?
+        .queue(Print('\n'))?;
     stdout.flush()
 }
 
 fn main() {
+    set_handler(|| {
+        let err_code = if wrap_up(stdout()).is_ok() { 0 } else { 1 };
+        exit(err_code);
+    })
+    .expect("could not set Ctrl-C handler");
     main_uwu().expect("oopsie daisy!");
 }
 

@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 crossterm = { version = "0.25.0", default-features = false }
+ctrlc = "3.2.3"
