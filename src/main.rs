@@ -1,3 +1,5 @@
+// TODO: add anyhow?
+
 use crossterm::style::{Color, Print, SetForegroundColor};
 use crossterm::terminal::{Clear, ClearType};
 use crossterm::{cursor, QueueableCommand};
@@ -6,13 +8,16 @@ use std::fs;
 use std::io::{self, stdout, Stdout, Write};
 use std::process::exit;
 use std::thread::sleep;
+use std::env::args;
 use std::time::Duration;
 
 const HIGHLIGHT_OFFSET: usize = 5;
 const DO_NEWLINE: bool = false;
 
 fn main_uwu() -> io::Result<()> {
-    let source = fs::read_to_string("source_text.txt")?;
+    let fp = args().nth(1).expect("file path not provided");
+    let delay = args().nth(2).map(|s| s.parse().expect("could not parse delay")).unwrap_or(200);
+    let source = fs::read_to_string(fp)?;
     let mut stdout = stdout();
     stdout.queue(cursor::Hide)?.queue(Print('\n'))?;
     stdout.flush()?;
@@ -32,7 +37,7 @@ fn main_uwu() -> io::Result<()> {
             stdout.queue(Print('\n'))?;
         }
         stdout.flush()?;
-        sleep(Duration::from_millis(200));
+        sleep(Duration::from_millis(delay));
     }
     wrap_up(stdout)
 }
